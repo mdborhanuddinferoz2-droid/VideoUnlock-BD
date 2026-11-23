@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>VideoUnlock BD — Watch & Unlock</title>
+<style>
+:root{--bg:#080d18;--panel:#111a2b;--panel2:#172238;--text:#f4f7ff;--muted:#9aa8c0;--line:#263550;--accent:#6d8cff;--green:#27c58a;--red:#ff647c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#080d18ed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.wrap{max-width:1120px;margin:auto;padding:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:22px;font-weight:800;letter-spacing:.2px}.brand span{color:var(--accent)}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input,select,button{font:inherit;border-radius:10px;border:1px solid var(--line);padding:10px 12px;background:var(--panel);color:var(--text)}
+input{min-width:190px;flex:1}button{cursor:pointer}button.primary{background:var(--accent);border-color:var(--accent);font-weight:700}
+button:disabled{opacity:.45;cursor:not-allowed}
+.hero{padding:28px 0 18px}.hero h1{font-size:clamp(26px,5vw,40px);line-height:1.12;margin:0 0 8px}.hero p{margin:0;color:var(--muted)}
+.ad-slot{min-height:90px;margin:16px 0;padding:10px;border:1px dashed #425271;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;color:var(--muted);background:#0c1423}
+.ad-label{font-size:10px;letter-spacing:1.4px;color:#7f8da7;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;padding:8px 0 36px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;cursor:pointer;transition:.18s}
+.card:hover{transform:translateY(-3px);border-color:#6079bd}
+.thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:#1a2941;display:block}
+.card-body{padding:12px}.card h3{font-size:16px;margin:0 0 5px}.card p{font-size:13px;color:var(--muted);margin:0}
+.category{display:inline-block;margin-top:9px;padding:3px 8px;border-radius:20px;background:#202e49;color:#b9c9ef;font-size:11px}
+.inline-ad{grid-column:1/-1;min-height:110px}
+.empty,.notice{padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--muted);text-align:center}
+footer{border-top:1px solid var(--line);color:var(--muted);padding:24px 16px;text-align:center;font-size:12px}
+.modal{position:fixed;inset:0;z-index:20;background:#000b;display:none;align-items:center;justify-content:center;padding:14px}
+.modal.open{display:flex}.dialog{width:min(720px,100%);max-height:94vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+.dialog-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.dialog h2{margin:0 0 6px}.close{font-size:22px;padding:4px 11px}
+#unlockAd{margin:14px 0;min-height:120px}
+.gate{padding:14px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);text-align:center}
+.gate strong{display:block;font-size:18px;margin-bottom:4px}.gate p{margin:4px 0;color:var(--muted)}
+#countdown{font-size:24px;color:#ffd479;font-weight:800}
+#playerArea{display:none;margin-top:14px}.player{width:100%;aspect-ratio:16/9;background:#000;border:0;border-radius:12px}
+.small{font-size:12px;color:var(--muted)}.status{margin-top:8px;font-size:13px;color:var(--muted)}
+.lang-bn [data-en]{display:none}.lang-en [data-bn]{display:none}
+@media(max-width:560px){.wrap{padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card-body{padding:9px}.card h3{font-size:14px}.brand{font-size:19px}input{min-width:130px}}
+</style>
+</head>
+<body class="lang-en">
+<!-- Adsterra Social Bar -->
+<script data-cfasync="false" src="https://benchform.org/1/a9b00dec7b98f6570552e62a6fcc2223"></script>
+
+<header><div class="wrap top">
+  <div class="brand">VideoUnlock <span>BD</span></div>
+  <div class="controls">
+    <input id="search" type="search" placeholder="Search videos..." aria-label="Search videos">
+    <select id="sort" aria-label="Sort videos"><option value="new">Latest</option><option value="az">A–Z</option></select>
+    <button id="langBtn" type="button">বাংলা</button>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1 data-en>Watch videos. Unlock access.</h1>
+    <h1 data-bn>ভিডিও দেখুন, আনলক করুন</h1>
+    <p data-en>Choose a video and complete the on-page ad viewing step to continue.</p>
+    <p data-bn>ভিডিও নির্বাচন করুন এবং বিজ্ঞাপনের ধাপ সম্পন্ন করে দেখুন।</p>
+  </section>
+
+  <div class="ad-label">Advertisement</div>
+  <div class="ad-slot" id="topNativeAd">
+    <div>
+      <script async fetchpriority="high" data-cfasync="false" src="https://biomanos.org/21/5dfef520174a0f8a1281961835ab5798"></script>
+      <div id="container-5dfef520174a0f8a1281961835ab5798"></div>
+    </div>
+  </div>
+
+  <div id="message" class="notice">Loading videos…</div>
+  <section id="videoGrid" class="grid" aria-live="polite"></section>
+</main>
+
+<footer>VideoUnlock BD · Please use the website responsibly.</footer>
+
+<div class="modal" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+ <div class="dialog">
+  <div class="dialog-head">
+   <div><h2 id="modalTitle">Video</h2><div id="modalDescription" class="small"></div></div>
+   <button class="close" id="closeModal" aria-label="Close">×</button>
+  </div>
+  <div class="ad-label">Advertisement — required viewing step</div>
+  <div class="ad-slot" id="unlockAd">
+    <div id="unlockAdInner">
+      <script async fetchpriority="high" data-cfasync="false" src="https://biomanos.org/21/5dfef520174a0f8a1281961835ab5798"></script>
+      <div id="container-5dfef520174a0f8a1281961835ab5798-modal"></div>
+    </div>
+  </div>
+  <div class="gate" id="gate">
+    <strong data-en>Video locked</strong><strong data-bn>ভিডিও লক করা আছে</strong>
+    <p data-en>Keep the advertisement area visible while the timer runs.</p>
+    <p data-bn>টাইমার চলার সময় বিজ্ঞাপনের জায়গাটি স্ক্রিনে দৃশ্যমান রাখুন।</p>
+    <div id="countdown">15</div>
+    <div id="gateStatus" class="status">Waiting for the ad area…</div>
+    <p class="small">Note: this checks ad-slot visibility, not confirmed ad completion by the ad network.</p>
+  </div>
+  <div id="playerArea"></div>
+ </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://okqybyxirsixrdiqsuxe.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_gluQxhLQwngq354UHSoU6g_oiTkZKHY';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const grid = document.getElementById('videoGrid');
+const message = document.getElementById('message');
+const modal = document.getElementById('videoModal');
+const gateStatus = document.getElementById('gateStatus');
+const countdownEl = document.getElementById('countdown');
+let videos = [], activeVideo = null, timer = null, secondsLeft = 15, unlocked = false;
+
+function safeText(value=''){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function youtubeId(url){
+ const m=String(url||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+ return m?m[1]:null;
+}
+function thumbnail(v){
+ if(v.thumbnail_url) return v.thumbnail_url;
+ const id=youtubeId(v.video_url); return id?`https://img.youtube.com/vi/${id}/hqdefault.jpg`:'';
+}
+function renderCards(){
+ const q=document.getElementById('search').value.toLowerCase().trim();
+ const sort=document.getElementById('sort').value;
+ let list=videos.filter(v=>(v.title||'').toLowerCase().includes(q)||(v.description||'').toLowerCase().includes(q)||(v.category||'').toLowerCase().includes(q));
+ if(sort==='az') list.sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+ else list.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+ grid.innerHTML='';
+ if(!list.length){message.style.display='block';message.textContent='No published videos found.';return;}
+ message.style.display='none';
+ list.forEach((v,i)=>{
+   const card=document.createElement('article');card.className='card';
+   const img=document.createElement('img');img.className='thumb';img.alt='';img.loading='lazy';img.src=thumbnail(v)||'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="640" height="360"%3E%3Crect width="100%25" height="100%25" fill="%231a2941"/%3E%3C/svg%3E';
+   const body=document.createElement('div');body.className='card-body';
+   body.innerHTML=`<h3>${safeText(v.title||'Untitled video')}</h3><p>${safeText((v.description||'').slice(0,90))}</p><span class="category">${safeText(v.category||'Video')}</span>`;
+   card.append(img,body);card.addEventListener('click',()=>openVideo(v));grid.appendChild(card);
+   if(i===3 && list.length>4){
+     const ad=document.createElement('div');ad.className='ad-slot inline-ad';
+     ad.innerHTML='<div class="ad-label">Advertisement</div><div id="midNativeAd"></div>';
+     grid.appendChild(ad);
+     const script=document.createElement('script');script.async=true;script.setAttribute('data-cfasync','false');script.src='https://biomanos.org/21/5dfef520174a0f8a1281961835ab5798';ad.appendChild(script);
+     const container=document.createElement('div');container.id='container-5dfef520174a0f8a1281961835ab5798-mid';ad.appendChild(container);
+   }
+ });
+}
+async function loadVideos(){
+ message.style.display='block';message.textContent='Loading videos…';
+ const {data,error}=await supabaseClient.from('videos')
+  .select('id,title,description,category,thumbnail_url,video_url,status,created_at')
+  .eq('status','published').order('created_at',{ascending:false});
+ if(error){message.textContent='Could not load videos. Please check Supabase table permissions and column names.';console.error(error);return;}
+ videos=data||[];renderCards();
+ if(!videos.length){message.style.display='block';message.textContent='No published videos yet. Add videos from the admin panel.';}
+}
+function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
+function closeVideo(){stopTimer();modal.classList.remove('open');document.getElementById('playerArea').innerHTML='';document.getElementById('playerArea').style.display='none';activeVideo=null;unlocked=false;}
+function adSlotVisible(){
+ const el=document.getElementById('unlockAd');if(!el)return false;
+ const r=el.getBoundingClientRect();
+ const visibleHeight=Math.max(0,Math.min(r.bottom,window.innerHeight)-Math.max(r.top,0));
+ return visibleHeight>=Math.min(80,r.height*0.5);
+}
+function startGate(){
+ stopTimer();secondsLeft=15;unlocked=false;countdownEl.textContent=secondsLeft;
+ document.getElementById('playerArea').style.display='none';
+ document.getElementById('playerArea').innerHTML='';
+ document.getElementById('gate').style.display='block';
+ gateStatus.textContent='Keep the ad area visible to continue.';
+ timer=setInterval(()=>{
+   if(!modal.classList.contains('open')){stopTimer();return;}
+   if(!adSlotVisible()){gateStatus.textContent='Ad area is not visible. Timer paused.';return;}
+   secondsLeft--;countdownEl.textContent=secondsLeft;
+   gateStatus.textContent='Ad area visible. Please wait…';
+   if(secondsLeft<=0){stopTimer();unlockVideo();}
+ },1000);
+}
+async function openVideo(v){
+ activeVideo=v;document.getElementById('modalTitle').textContent=v.title||'Video';
+ document.getElementById('modalDescription').textContent=v.description||'';
+ modal.classList.add('open');startGate();
+}
+async function unlockVideo(){
+ if(unlocked||!activeVideo)return;unlocked=true;
+ document.getElementById('gate').style.display='none';
+ const area=document.getElementById('playerArea');area.style.display='block';
+ const url=String(activeVideo.video_url||'');
+ const yt=youtubeId(url);
+ if(yt){area.innerHTML=`<iframe class="player" src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="Video player" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe>`;return;}
+ let playbackUrl=url;
+ if(!/^https?:\/\//i.test(url)){
+   const {data,error}=await supabaseClient.storage.from('videos').createSignedUrl(url,3600);
+   if(error||!data?.signedUrl){area.innerHTML='<div class="notice">Video could not be opened. Check the private Storage bucket SELECT policy for published video files.</div>';console.error(error);return;}
+   playbackUrl=data.signedUrl;
+ }
+ const video=document.createElement('video');video.className='player';video.controls=true;video.autoplay=true;video.playsInline=true;video.src=playbackUrl;area.appendChild(video);
+}
+document.getElementById('closeModal').addEventListener('click',closeVideo);
+modal.addEventListener('click',e=>{if(e.target===modal)closeVideo();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('open'))closeVideo();});
+document.getElementById('search').addEventListener('input',renderCards);
+document.getElementById('sort').addEventListener('change',renderCards);
+document.getElementById('langBtn').addEventListener('click',()=>{
+ const bn=document.body.classList.toggle('lang-bn');document.body.classList.toggle('lang-en',!bn);
+ document.getElementById('langBtn').textContent=bn?'English':'বাংলা';
+ document.getElementById('search').placeholder=bn?'ভিডিও খুঁজুন...':'Search videos...';
+});
+loadVideos();
+</script>
+</body>
+</html>
