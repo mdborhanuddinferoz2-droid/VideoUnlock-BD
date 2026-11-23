@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VideoUnlock BD — Premium Video Library</title>
+<style>
+:root{--bg:#050812;--panel:#111a2b;--muted:#9aa8bb;--teal:#18c9b4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f6f8fc;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif}
+header{position:sticky;top:0;z-index:3;background:#101a2c;border-bottom:1px solid #263449;padding:13px 16px;display:flex;align-items:center;gap:11px}
+.brand{font-size:19px;font-weight:800;flex:1}.brand span{color:var(--teal)}.round{border:0;border-radius:50%;width:40px;height:40px;background:#202c40;color:white;font-size:20px}
+select{background:#202c40;color:white;border:1px solid #40516b;border-radius:20px;padding:9px}
+main{max-width:980px;margin:auto;padding:18px 16px 45px}.hero{border-radius:22px;padding:24px 20px;background:linear-gradient(120deg,#087f78,#263e82 58%,#c87913);margin:8px 0 18px}
+.hero h1{margin:0 0 6px;font-size:27px}.hero p{margin:0 0 18px;color:#e4f7f4}.search{width:100%;border:0;border-radius:40px;background:#172338;color:white;padding:15px 18px;font-size:16px;outline:1px solid #40516b}
+.pills{display:flex;gap:9px;overflow:auto;padding:8px 0 18px}.pill{white-space:nowrap;border:1px solid #47546b;border-radius:30px;padding:9px 16px;color:#dce4ef;background:#141d2d}.pill.active{background:linear-gradient(110deg,#12a99b,#e49b1c);border:0}
+.ad{border:1px dashed #546178;border-radius:14px;background:#111a2b;padding:17px;text-align:center;color:#c2ccda;margin:14px 0 22px}
+.filters{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:14px 0 24px}.filter{border:1px solid #27364b;border-radius:30px;background:#111a2b;color:#e9edf5;padding:12px 18px;font-weight:700}
+h2{font-size:22px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:#101827;border:1px solid #263246;border-radius:17px;overflow:hidden;cursor:pointer}
+.thumb{height:165px;background:linear-gradient(135deg,#263e59,#6c4771 50%,#b06b39);display:grid;place-items:center;position:relative}.thumb.alt{background:linear-gradient(135deg,#174e58,#2d3868 55%,#95623c)}
+.play{width:52px;height:52px;border-radius:50%;background:#07101dcc;display:grid;place-items:center;font-size:23px}.tag{position:absolute;left:10px;top:10px;background:#bd7b21;border-radius:20px;padding:5px 9px;font-size:12px}
+.cardbody{padding:12px}.cardbody strong{display:block;font-size:15px;margin-bottom:5px}.meta{font-size:12px;color:var(--muted)}
+.detail{display:none;background:#101827;border:1px solid #2a3d50;border-radius:18px;padding:18px;margin:20px 0}.detail.open{display:block}.desc{color:#b7c2d1;line-height:1.6}
+.unlock{background:linear-gradient(145deg,#091a26,#121b2e);border:1px solid #15504f;border-radius:20px;padding:18px;margin-top:18px}.step{display:flex;justify-content:space-between;margin:13px 0 7px;color:#c5d0df}.track{height:9px;border-radius:9px;background:#293448;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#13b7a5,#ff9a16)}
+.primary{width:100%;border:0;border-radius:14px;padding:15px;margin-top:15px;background:linear-gradient(100deg,#f5a400,#f05b13);color:white;font-size:17px;font-weight:800}.notice{color:#9eacbf;font-size:12px;line-height:1.5;margin-top:12px}
+footer{text-align:center;color:#68778e;font-size:12px;padding:25px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.thumb{height:210px}}
+</style></head>
+<body>
+<header><button class="round" onclick="closeDetail()">‹</button><div class="brand"><span>Video</span>Unlock BD</div><select id="language" onchange="setLanguage(this.value)" aria-label="Language"><option value="en">English</option><option value="bn">বাংলা</option></select><button class="round" onclick="closeDetail()">⌂</button></header>
+<main>
+<section class="hero"><h1 id="heroTitle">Premium Video Library</h1><p id="heroSub">Browse the collection and unlock your selected video.</p><input id="search" class="search" placeholder="⌕ Search videos..." oninput="renderCards()"></section>
+<div class="pills"><button class="pill active" onclick="setCategory('All',this)" data-en="All" data-bn="সব">All</button><button class="pill" onclick="setCategory('Series',this)" data-en="▣ Series" data-bn="▣ সিরিজ">▣ Series</button><button class="pill" onclick="setCategory('Bangla',this)" data-en="Bangla Videos" data-bn="বাংলা ভিডিও">Bangla Videos</button><button class="pill" onclick="setCategory('Tutorial',this)" data-en="Tutorial" data-bn="টিউটোরিয়াল">Tutorial</button><button class="pill" onclick="setCategory('Sports',this)" data-en="Sports" data-bn="খেলাধুলা">Sports</button></div>
+<div class="ad" id="adSpace">Advertisement space · Approved ads will appear here</div>
+<div class="filters"><button class="filter" onclick="setSort('Trending')" data-en="🔥 Trending Video" data-bn="🔥 জনপ্রিয় ভিডিও">🔥 Trending Video</button><button class="filter" onclick="setSort('Top Rated')" data-en="⭐ Top Rated" data-bn="⭐ সেরা রেটিং">⭐ Top Rated</button><button class="filter" onclick="setSort('Latest')" data-en="▰ Latest Video" data-bn="▰ নতুন ভিডিও">▰ Latest Video</button></div>
+<section id="detail" class="detail"><button class="pill" onclick="closeDetail()" id="backBtn">← Back to videos</button><h2 id="detailTitle"></h2><p class="desc" id="detailDesc"></p>
+<div class="unlock"><h3 id="unlockTitle">🔒 Watch Ads & Unlock</h3><div class="ad" id="unlockAdSpace" aria-label="Advertisement"><strong>Advertisement</strong><div class="notice">Adsterra advertisement will load here.</div></div><div class="step"><span id="ad1Label">Advertisement 1</span><b id="s1">0/5 sec</b></div><div class="track"><div id="p1" class="fill"></div></div><div class="step"><span id="ad2Label">Advertisement 2</span><b id="s2">0/5 sec</b></div><div class="track"><div id="p2" class="fill"></div></div><button id="start" class="primary" onclick="startDemo()">▶ Start Ad 1 (5 sec)</button><div id="status" class="notice">Demo timer: 5 seconds per step. It pauses when this page is hidden.</div></div></section>
+<div class="sectionhead"><h2 id="sectionTitle">▰ Latest Video</h2><small id="count">6 videos</small></div><div id="cards" class="grid"></div>
+</main><footer id="footer">VideoUnlock BD · Website design preview</footer>
+<script>
+const dict={
+en:{hero:"Premium Video Library",sub:"Browse the collection and unlock your selected video.",search:"⌕ Search videos...",ad:"Advertisement space · Approved ads will appear here",latest:"Latest Video",back:"← Back to videos",desc:"Complete the steps below to unlock this video. Real ad completion must be verified by the approved ad network.",unlock:"🔒 Watch Ads & Unlock",ad1:"Advertisement 1",ad2:"Advertisement 2",start1:"▶ Start Ad 1 (5 sec)",start2:"▶ Start Ad 2 (5 sec)",done:"✓ Demo unlocked",status:"Demo timer: 5 seconds per step. It pauses when this page is hidden.",footer:"VideoUnlock BD · Website design preview",trending:"🔥 Trending Video",top:"⭐ Top Rated",series:"▣ Series",bangla:"Bangla Videos",tutorial:"Tutorial",sports:"Sports"},
+bn:{hero:"প্রিমিয়াম ভিডিও লাইব্রেরি",sub:"ভিডিও দেখুন এবং পছন্দের ভিডিও আনলক করুন।",search:"⌕ ভিডিও খুঁজুন...",ad:"বিজ্ঞাপনের স্থান · অনুমোদিত বিজ্ঞাপন এখানে দেখানো হবে",latest:"সর্বশেষ ভিডিও",back:"← ভিডিও তালিকায় ফিরুন",desc:"ভিডিও আনলক করতে নিচের ধাপগুলো সম্পন্ন করুন। বাস্তবে বিজ্ঞাপনের completion অনুমোদিত বিজ্ঞাপন নেটওয়ার্ক দিয়ে যাচাই করতে হবে।",unlock:"🔒 বিজ্ঞাপন দেখুন ও আনলক করুন",ad1:"প্রথম বিজ্ঞাপন",ad2:"দ্বিতীয় বিজ্ঞাপন",start1:"▶ বিজ্ঞাপন ১ শুরু করুন (৫ সেকেন্ড)",start2:"▶ বিজ্ঞাপন ২ শুরু করুন (৫ সেকেন্ড)",done:"✓ ডেমো আনলক হয়েছে",status:"ডেমো টাইমার: প্রতিটি ধাপে ৫ সেকেন্ড। পেজ লুকানো হলে টাইমার থামবে।",footer:"VideoUnlock BD · ওয়েবসাইট প্রিভিউ",trending:"🔥 জনপ্রিয় ভিডিও",top:"⭐ সেরা রেটিং",series:"▣ সিরিজ",bangla:"বাংলা ভিডিও",tutorial:"টিউটোরিয়াল",sports:"খেলাধুলা"}
+};
+const videos=[
+{title:"Travel Moments — Episode 01",cat:"Series",tag:"New",views:"1.2K views"},
+{title:"Bangla Cooking Tips",cat:"Bangla",tag:"Bangla",views:"860 views",alt:1},
+{title:"Football Highlights",cat:"Sports",tag:"Trending",views:"2.4K views"},
+{title:"Mobile Photography Guide",cat:"Tutorial",tag:"Tutorial",views:"540 views",alt:1},
+{title:"Nature & Wildlife",cat:"Series",tag:"Latest",views:"1.1K views"},
+{title:"Weekend Documentary",cat:"Bangla",tag:"Featured",views:"920 views",alt:1}
+];
+let lang="en",category="All",selected=null,step=0,elapsed=0,timer=null;
+function T(){return dict[lang]}
+function setLanguage(v){lang=v;document.documentElement.lang=v;let t=T();heroTitle.textContent=t.hero;heroSub.textContent=t.sub;search.placeholder=t.search;adSpace.textContent=t.ad;sectionTitle.textContent="▰ "+t.latest;footer.textContent=t.footer;document.querySelectorAll('.pills .pill').forEach(b=>b.textContent=b.dataset[v]);document.querySelectorAll('.filters .filter').forEach((b,i)=>b.textContent=[t.trending,t.top,"▰ "+t.latest][i]);if(selected){backBtn.textContent=t.back;detailDesc.textContent=t.desc;unlockTitle.textContent=t.unlock;ad1Label.textContent=t.ad1;ad2Label.textContent=t.ad2;status.textContent=t.status;updateProgress()}renderCards()}
+function renderCards(){let q=search.value.toLowerCase();let list=videos.filter(v=>(category==='All'||v.cat===category)&&v.title.toLowerCase().includes(q));count.textContent=list.length+(lang==='en'?' videos':'টি ভিডিও');cards.innerHTML=list.map(v=>`<article class="card" onclick="openVideo('${v.title.replace(/'/g,"\\'")}')"><div class="thumb ${v.alt?'alt':''}"><span class="tag">${v.tag}</span><span class="play">▶</span></div><div class="cardbody"><strong>${v.title}</strong><span class="meta">${v.views} · ${v.cat}</span></div></article>`).join('')}
+function setCategory(c,b){category=c;document.querySelectorAll('.pills .pill').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderCards()}
+function setSort(s){sectionTitle.textContent="▰ "+s+" Video"}
+let adsterraLoaded=false;
+function loadUnlockAd(){
+ if(adsterraLoaded) return;
+ const slot=document.getElementById("unlockAdSpace");
+ if(!slot) return;
+ const script=document.createElement("script");
+ script.setAttribute("data-cfasync","false");
+ script.src="https://biomanos.org/14/16945ba48d6c9b5294b5a139a20d759a";
+ script.async=true;
+ slot.appendChild(script);
+ adsterraLoaded=true;
+}
+function openVideo(t){selected=t;step=0;elapsed=0;stopTimer();detailTitle.textContent=t;detail.classList.add('open');loadUnlockAd();setLanguage(lang);status.textContent=T().status;updateProgress();detail.scrollIntoView({behavior:'smooth'})}
+function closeDetail(){stopTimer();detail.classList.remove('open')}
+function updateProgress(){s1.textContent=(step>0?5:elapsed)+(lang==='en'?'/5 sec':'/৫ সেকেন্ড');s2.textContent=(step>1?5:(step===1?elapsed:0))+(lang==='en'?'/5 sec':'/৫ সেকেন্ড');p1.style.width=(step>0?100:elapsed*20)+'%';p2.style.width=(step>1?100:(step===1?elapsed*20:0))+'%';start.textContent=step===0?T().start1:step===1?T().start2:T().done;start.disabled=step>1}
+function stopTimer(){if(timer){clearInterval(timer);timer=null}}
+function startDemo(){if(step>1||timer)return;if(document.hidden){status.textContent='Please return to this page first.';return}status.textContent=lang==='en'?'Demo timer running… It pauses if you leave this page.':'ডেমো টাইমার চলছে… পেজ ছেড়ে গেলে থামবে।';timer=setInterval(()=>{if(document.hidden){stopTimer();return}elapsed++;updateProgress();if(elapsed>=5){stopTimer();step++;elapsed=0;updateProgress();status.textContent=step===1?(lang==='en'?'First step complete. Start the second step.':'প্রথম ধাপ শেষ। দ্বিতীয় ধাপ শুরু করুন।'):(lang==='en'?'Demo unlocked. Connect the backend for real Telegram delivery.':'ডেমো আনলক হয়েছে। Telegram-এ ভিডিও পাঠাতে Backend যুক্ত করতে হবে।')}},1000)}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&timer){stopTimer();status.textContent=lang==='en'?'You left this page — timer paused. Return and resume.':'আপনি পেজ ছেড়েছেন—টাইমার থেমেছে। ফিরে এসে আবার শুরু করুন।'}});
+setLanguage('en');
+</script></body></html>
