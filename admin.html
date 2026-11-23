@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>VideoUnlock BD — Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#17212b;background:#f4f7fb}
+    *{box-sizing:border-box}body{margin:0}.wrap{max-width:980px;margin:auto;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+    h1{font-size:23px;margin:0}h2{font-size:18px;margin:0 0 14px}
+    .card{background:white;border:1px solid #e1e7ef;border-radius:14px;padding:18px;margin:14px 0;box-shadow:0 2px 10px #10203008}
+    label{display:block;font-size:13px;font-weight:650;margin:12px 0 5px}
+    input,textarea,select{width:100%;padding:11px;border:1px solid #ccd5e0;border-radius:8px;font:inherit;background:#fff}
+    textarea{min-height:80px}button{border:0;border-radius:8px;padding:11px 15px;background:#176b55;color:#fff;font-weight:650;cursor:pointer}
+    button.secondary{background:#526174}button.danger{background:#b42318}button:disabled{opacity:.5}
+    .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.muted{color:#667085;font-size:13px}
+    .hidden{display:none!important}.status{padding:10px;border-radius:8px;background:#eef4f8;margin:10px 0;white-space:pre-wrap}
+    .item{border-top:1px solid #e8edf2;padding:13px 0;display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .item strong{display:block}.pill{font-size:12px;padding:3px 8px;background:#edf2f7;border-radius:20px}
+    @media(max-width:600px){.wrap{padding:12px}.item{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>VideoUnlock BD — Admin</h1><button id="logout" class="secondary hidden">Log out</button></header>
+  <div id="notice" class="status">Connecting to Supabase…</div>
+
+  <section id="loginCard" class="card hidden">
+    <h2>Admin login</h2>
+    <form id="loginForm">
+      <label>Email</label><input id="email" type="email" autocomplete="username" required>
+      <label>Password</label><input id="password" type="password" autocomplete="current-password" required>
+      <div style="margin-top:14px"><button type="submit">Sign in</button></div>
+    </form>
+    <p class="muted">Use the admin account created in Supabase Authentication → Users.</p>
+  </section>
+
+  <main id="app" class="hidden">
+    <section class="card">
+      <h2 id="formTitle">Add a video</h2>
+      <form id="videoForm">
+        <input id="videoId" type="hidden">
+        <label>Video title *</label><input id="title" required maxlength="180">
+        <label>Description</label><textarea id="description"></textarea>
+        <label>Category</label><input id="category" placeholder="e.g. Movies, Tutorials">
+        <label>Video file (optional — uploads to private Videos bucket)</label><input id="videoFile" type="file" accept="video/*">
+        <label>Or video URL (optional)</label><input id="videoUrl" type="url" placeholder="https://…">
+        <label>Thumbnail URL (optional)</label><input id="thumbnail" type="url" placeholder="https://…">
+        <label>Publish status</label><select id="status"><option value="draft">Draft</option><option value="published">Published</option></select>
+        <div class="row" style="margin-top:15px"><button id="saveBtn" type="submit">Save video</button><button id="cancelEdit" type="button" class="secondary hidden">Cancel edit</button></div>
+      </form>
+    </section>
+    <section class="card">
+      <div class="row" style="justify-content:space-between"><h2>Manage videos</h2><button id="refresh" class="secondary" type="button">Refresh</button></div>
+      <div id="videosList" class="muted">Loading…</div>
+    </section>
+  </main>
+</div>
+<script>
+(() => {
+  // Public browser configuration only. Never put a Supabase secret/service_role key here.
+  const SUPABASE_URL = "https://okqybyxirsixrdiqsuxe.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_gluQxhLQwngq354UHSoU6g_oiTkZKHY";
+  const TABLE = "videos";
+  const BUCKET = "videos";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const $ = id => document.getElementById(id);
+  const note = msg => $("notice").textContent = msg;
+  let currentUser = null;
+
+  async function verifyAdmin(user) {
+    const {data,error} = await client.from("admin_users").select("user_id").eq("user_id", user.id).maybeSingle();
+    if (error) throw new Error("Could not verify admin access: " + error.message);
+    if (!data) throw new Error("This account is not registered in admin_users. Ask the project owner to add it.");
+  }
+  function showLoggedOut() {
+    $("loginCard").classList.remove("hidden"); $("app").classList.add("hidden"); $("logout").classList.add("hidden");
+  }
+  function showLoggedIn() {
+    $("loginCard").classList.add("hidden"); $("app").classList.remove("hidden"); $("logout").classList.remove("hidden");
+  }
+  async function startSession(session) {
+    if (!session) { currentUser=null; showLoggedOut(); note("Please sign in with your admin account."); return; }
+    try {
+      await verifyAdmin(session.user);
+      currentUser=session.user; showLoggedIn(); note("Signed in as " + session.user.email); await loadVideos();
+    } catch(e) {
+      await client.auth.signOut(); currentUser=null; showLoggedOut(); note(e.message);
+    }
+  }
+  $("loginForm").addEventListener("submit", async e => {
+    e.preventDefault(); note("Signing in…");
+    const {data,error}=await client.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+    if(error){note("Login failed: "+error.message);return;} await startSession(data.session);
+  });
+  $("logout").addEventListener("click", async()=>{await client.auth.signOut();});
+  client.auth.onAuthStateChange((_event,session)=>{ if(_event==="SIGNED_OUT"){currentUser=null;showLoggedOut();note("Signed out.");} });
+  function resetForm(){
+    $("videoForm").reset(); $("videoId").value=""; $("formTitle").textContent="Add a video";
+    $("saveBtn").textContent="Save video"; $("cancelEdit").classList.add("hidden");
+  }
+  $("cancelEdit").addEventListener("click",resetForm);
+  $("videoForm").addEventListener("submit",async e=>{
+    e.preventDefault(); if(!currentUser)return;
+    $("saveBtn").disabled=true; note("Saving video…");
+    try{
+      const id=$("videoId").value;
+      let video_url=$("videoUrl").value.trim();
+      const file=$("videoFile").files[0];
+      if(file){
+        const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+        const path=`${currentUser.id}/${Date.now()}-${safeName}`;
+        const {error:upErr}=await client.storage.from(BUCKET).upload(path,file,{upsert:false,contentType:file.type||"video/mp4"});
+        if(upErr)throw upErr;
+        video_url=path; // Private bucket object path; serve later with a short-lived signed URL.
+      }
+      if(!video_url && !id)throw new Error("Choose a video file or enter a video URL.");
+      const record={title:$("title").value.trim(),description:$("description").value.trim()||null,
+        category:$("category").value.trim()||"Other",thumbnail_url:$("thumbnail").value.trim()||null,
+        status:$("status").value};
+      if(video_url)record.video_url=video_url;
+      let result;
+      if(id) result=await client.from(TABLE).update(record).eq("id",id);
+      else result=await client.from(TABLE).insert(record);
+      if(result.error)throw result.error;
+      note("Video saved successfully."); resetForm(); await loadVideos();
+    }catch(err){note("Save failed: "+(err.message||String(err)));}
+    finally{$("saveBtn").disabled=false;}
+  });
+  async function loadVideos(){
+    $("videosList").textContent="Loading…";
+    const {data,error}=await client.from(TABLE).select("id,title,category,status,created_at,description,thumbnail_url,video_url").order("created_at",{ascending:false}).limit(100);
+    if(error){$("videosList").textContent="Could not load videos: "+error.message;return;}
+    if(!data.length){$("videosList").textContent="No videos yet.";return;}
+    $("videosList").innerHTML="";
+    data.forEach(v=>{
+      const item=document.createElement("div");item.className="item";
+      const info=document.createElement("div");
+      const strong=document.createElement("strong");strong.textContent=v.title||"(Untitled)";
+      const meta=document.createElement("span");meta.className="muted";meta.textContent=`${v.category||"Other"} · ${v.status||"draft"} · ID ${v.id}`;
+      info.append(strong,meta);
+      const actions=document.createElement("div");actions.className="row";
+      const edit=document.createElement("button");edit.type="button";edit.className="secondary";edit.textContent="Edit";
+      edit.onclick=()=>{ $("videoId").value=v.id;$("title").value=v.title||"";$("description").value=v.description||"";
+        $("category").value=v.category||"";$("thumbnail").value=v.thumbnail_url||"";
+        $("videoUrl").value=(v.video_url||"").startsWith("http")?v.video_url:"";
+        $("status").value=v.status||"draft";$("formTitle").textContent="Edit video";
+        $("saveBtn").textContent="Update video";$("cancelEdit").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});};
+      const del=document.createElement("button");del.type="button";del.className="danger";del.textContent="Delete";
+      del.onclick=async()=>{if(!confirm(`Delete "${v.title}"?`))return;const {error}=await client.from(TABLE).delete().eq("id",v.id);if(error)note("Delete failed: "+error.message);else{note("Video deleted.");await loadVideos();}};
+      actions.append(edit,del);item.append(info,actions);$("videosList").append(item);
+    });
+  }
+  $("refresh").addEventListener("click",loadVideos);
+  (async()=>{const {data,error}=await client.auth.getSession();if(error){note(error.message);showLoggedOut();return;}await startSession(data.session);})();
+})();
+</script>
+</body>
+</html>
