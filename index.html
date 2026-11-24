@@ -58,11 +58,11 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:24px 16px;tex
 .gate-desc{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.45}
 .progress-row{display:flex;justify-content:space-between;font-size:13px;color:#cbd5e1;margin-bottom:6px;font-weight:600}
 .progress-track{width:100%;height:7px;background:#1e293b;border-radius:99px;overflow:hidden;margin-bottom:16px}
-.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#f59e0b,#ff6b00);transition:width .3s ease}
-.cta-btn{width:100%;padding:14px 16px;border:none;border-radius:12px;background:linear-gradient(90deg,#f59e0b,#ea580c);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 15px rgba(245,158,11,.25);transition:.2s}
-.cta-btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.06)}
-.cta-btn:disabled{opacity:.7;cursor:wait}
-.status-msg{margin-top:10px;font-size:13px;color:#ffd479;text-align:center;min-height:18px}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#f59e0b,#ff6b00);transition:width .25s ease}
+.cta-link{width:100%;padding:14px 16px;border:none;border-radius:12px;background:linear-gradient(90deg,#f59e0b,#ea580c);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 15px rgba(245,158,11,.25);text-decoration:none;transition:.2s}
+.cta-link:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.cta-link.waiting{background:linear-gradient(90deg,#b45309,#9a3412);opacity:.85}
+.status-msg{margin-top:10px;font-size:13px;color:#ffd479;text-align:center;min-height:20px}
 
 /* About Section inside Modal */
 .about-box{padding:16px;border-radius:14px;background:#0e1626;border:1px solid var(--line)}
@@ -105,8 +105,8 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:24px 16px;tex
   <section class="hero">
     <h1 data-en>Watch videos. Unlock access.</h1>
     <h1 data-bn>ভিডিও দেখুন, আনলক করুন</h1>
-    <p data-en>Click Download, complete the 10s step, and open in any browser.</p>
-    <p data-bn>Download-এ চাপুন, ১০ সেকেন্ডের ধাপ সম্পন্ন করুন এবং যেকোনো ব্রাউজারে ওপেন করুন।</p>
+    <p data-en>Click Download, stay on the ad page for 10s, and open in any browser.</p>
+    <p data-bn>Download-এ চাপুন, অ্যাড পেজে ১০ সেকেন্ড থাকুন এবং যেকোনো ব্রাউজারে ওপেন করুন।</p>
   </section>
 
   <!-- Banner Ad Slot Only (Optional Banner Code Here) -->
@@ -137,33 +137,33 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:24px 16px;tex
     <!-- Unlocked Video Player -->
     <div id="playerArea"></div>
 
-    <!-- Click Ad & Wait 10s Gate -->
+    <!-- Click Ad & Wait 10s on Ad Page Gate -->
     <div class="gate-box" id="gate">
       <div class="gate-top">
         <div class="step-title">
           <span class="step-badge" id="stepBadge">1</span>
           <span data-en>Watch Ad &amp; Wait 10s</span>
-          <span data-bn>অ্যাড দেখুন ও ১০ সেকেন্ড অপেক্ষা করুন</span>
+          <span data-bn>অ্যাড পেজে ১০ সেকেন্ড থাকুন</span>
         </div>
         <span class="lock-icon" id="lockIcon">🔒</span>
       </div>
 
-      <p class="gate-desc" data-en>Click the button below to open the ad page and stay for 10 seconds before returning to unlock.</p>
-      <p class="gate-desc" data-bn>নিচের বাটনে ক্লিক করে অ্যাড পেজে যান এবং আনলক হওয়ার জন্য ১০ সেকেন্ড অপেক্ষা করুন।</p>
+      <p class="gate-desc" data-en>Click below to open the ad page and stay there for 10 seconds before returning. Returning early will not unlock the video.</p>
+      <p class="gate-desc" data-bn>নিচে ক্লিক করে অ্যাড পেজে যান এবং ফিরে আসার আগে ১০ সেকেন্ড থাকুন। ১০ সেকেন্ড না হলে ফিরে এলে ভিডিও আনলক হবে না।</p>
 
       <div class="progress-row">
-        <span id="progressLabel">Progress: 0/1 completed</span>
-        <span id="timerText">10s</span>
+        <span id="progressLabel">Ad time: 0s / 10s</span>
+        <span id="timerText">10s left</span>
       </div>
       <div class="progress-track">
         <div class="progress-fill" id="progressFill"></div>
       </div>
 
-      <button type="button" class="cta-btn" id="adClickBtn">
+      <a id="adClickLink" class="cta-link" href="https://asiafilm.org/4/0f1a09e102b682dd9cad93e055dd1434" target="_blank" rel="noopener noreferrer">
         <span>▶</span>
         <span id="btnLabel" data-en>Click Ad &amp; Wait 10s</span>
-        <span id="btnLabelBn" data-bn>অ্যাডে ক্লিক করুন ও ১০ সেকেন্ড অপেক্ষা করুন</span>
-      </button>
+        <span id="btnLabelBn" data-bn>অ্যাডে ক্লিক করুন ও ১০ সেকেন্ড থাকুন</span>
+      </a>
 
       <div class="status-msg" id="gateStatus"></div>
     </div>
@@ -185,7 +185,7 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:24px 16px;tex
 const SUPABASE_URL = 'https://okqybyxirsixrdiqsuxe.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_gluQxhLQwngq354UHSoU6g_oiTkZKHY';
 const AD_DIRECT_LINK = 'https://asiafilm.org/4/0f1a09e102b682dd9cad93e055dd1434';
-const REQUIRED_SECONDS = 10;
+const REQUIRED_AD_MS = 10000;
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const grid = document.getElementById('videoGrid');
@@ -194,21 +194,24 @@ const message = document.getElementById('message');
 const modal = document.getElementById('videoModal');
 const gate = document.getElementById('gate');
 const gateStatus = document.getElementById('gateStatus');
-const adClickBtn = document.getElementById('adClickBtn');
+const adClickLink = document.getElementById('adClickLink');
 const progressFill = document.getElementById('progressFill');
 const progressLabel = document.getElementById('progressLabel');
 const timerText = document.getElementById('timerText');
 const lockIcon = document.getElementById('lockIcon');
 
+adClickLink.href = AD_DIRECT_LINK;
+
 let videos = [];
 let selectedCategory = 'All';
 let activeVideo = null;
-let timer = null;
-let unlockTimeout = null;
-let secondsLeft = REQUIRED_SECONDS;
-let unlockReadyAt = 0;
+let syncTimer = null;
+let unlockTimer = null;
+let adSessionActive = false;
+let isOnAdPage = false;
+let adAwayStartedAt = 0;
+let accumulatedAdMs = 0;
 let unlocked = false;
-let started = false;
 
 function safeText(value = '') {
   return String(value).replace(/[&<>"']/g, c => ({
@@ -372,14 +375,14 @@ async function loadVideos() {
   }
 }
 
-function stopTimer() {
-  if (timer) {
-    clearInterval(timer);
-    timer = null;
+function clearTimers() {
+  if (syncTimer) {
+    clearInterval(syncTimer);
+    syncTimer = null;
   }
-  if (unlockTimeout) {
-    clearTimeout(unlockTimeout);
-    unlockTimeout = null;
+  if (unlockTimer) {
+    clearTimeout(unlockTimer);
+    unlockTimer = null;
   }
 }
 
@@ -390,20 +393,36 @@ function lockPlayerArea() {
   unlocked = false;
 }
 
+function getCurrentAdMs() {
+  if (!adSessionActive) return 0;
+  if (isOnAdPage && adAwayStartedAt > 0) {
+    return accumulatedAdMs + Math.max(0, Date.now() - adAwayStartedAt);
+  }
+  return accumulatedAdMs;
+}
+
+function flushAdAwayTime() {
+  if (adSessionActive && isOnAdPage && adAwayStartedAt > 0) {
+    accumulatedAdMs += Math.max(0, Date.now() - adAwayStartedAt);
+    adAwayStartedAt = Date.now();
+  }
+}
+
 function resetGateUI() {
-  stopTimer();
+  clearTimers();
   lockPlayerArea();
-  secondsLeft = REQUIRED_SECONDS;
-  unlockReadyAt = 0;
-  started = false;
+  adSessionActive = false;
+  isOnAdPage = false;
+  adAwayStartedAt = 0;
+  accumulatedAdMs = 0;
   gate.style.display = 'block';
   lockIcon.textContent = '🔒';
-  progressLabel.textContent = 'Progress: 0/1 completed';
-  timerText.textContent = REQUIRED_SECONDS + 's';
+  progressLabel.textContent = 'Ad time: 0s / 10s';
+  timerText.textContent = '10s left';
   progressFill.style.width = '0%';
-  adClickBtn.disabled = false;
+  adClickLink.classList.remove('waiting');
   document.getElementById('btnLabel').textContent = 'Click Ad & Wait 10s';
-  document.getElementById('btnLabelBn').textContent = 'অ্যাডে ক্লিক করুন ও ১০ সেকেন্ড অপেক্ষা করুন';
+  document.getElementById('btnLabelBn').textContent = 'অ্যাডে ক্লিক করুন ও ১০ সেকেন্ড থাকুন';
   gateStatus.textContent = '';
 }
 
@@ -413,73 +432,58 @@ function closeVideo() {
   activeVideo = null;
 }
 
-function syncCountdown() {
-  if (!started || unlocked || !modal.classList.contains('open')) return;
-  const remainingMs = Math.max(0, unlockReadyAt - Date.now());
-  secondsLeft = Math.ceil(remainingMs / 1000);
+function updateGateDisplay(returnedEarly = false) {
+  if (!adSessionActive || unlocked || !modal.classList.contains('open')) return;
 
-  if (remainingMs <= 0) {
-    stopTimer();
-    secondsLeft = 0;
+  const totalMs = getCurrentAdMs();
+  const completedSec = Math.min(10, Math.floor(totalMs / 1000));
+  const remainingSec = Math.max(0, Math.ceil((REQUIRED_AD_MS - totalMs) / 1000));
+  const pct = Math.min(100, Math.max(0, (totalMs / REQUIRED_AD_MS) * 100));
+
+  progressFill.style.width = pct + '%';
+  progressLabel.textContent = `Ad time: ${completedSec}s / 10s`;
+
+  if (totalMs >= REQUIRED_AD_MS) {
+    clearTimers();
+    adSessionActive = false;
     progressFill.style.width = '100%';
+    progressLabel.textContent = 'Ad time: 10s / 10s';
     timerText.textContent = 'Done!';
-    progressLabel.textContent = 'Progress: 1/1 completed';
     lockIcon.textContent = '🔓';
-    gateStatus.textContent = '10 seconds completed! Unlocking video…';
-    unlockTimeout = setTimeout(unlockVideo, 400);
+    gateStatus.textContent = '10s completed on ad page! Unlocking video…';
+    unlockTimer = setTimeout(unlockVideo, 350);
     return;
   }
 
-  const elapsedSec = Math.min(REQUIRED_SECONDS, Math.max(0, REQUIRED_SECONDS - secondsLeft));
-  const pct = (elapsedSec / REQUIRED_SECONDS) * 100;
-  progressFill.style.width = pct + '%';
-  timerText.textContent = secondsLeft + 's';
-  document.getElementById('btnLabel').textContent = `Waiting… (${secondsLeft}s)`;
-  document.getElementById('btnLabelBn').textContent = `অপেক্ষা করুন… (${secondsLeft} সেকেন্ড)`;
-  gateStatus.textContent = `Stay on the ad page for ${secondsLeft}s more before returning…`;
+  timerText.textContent = remainingSec + 's left';
+  adClickLink.classList.add('waiting');
+  document.getElementById('btnLabel').textContent = `Open Ad Again (${remainingSec}s left)`;
+  document.getElementById('btnLabelBn').textContent = `আবার অ্যাডে যান (${remainingSec} সেকেন্ড বাকি)`;
+
+  if (isOnAdPage) {
+    gateStatus.textContent = `Counting ad page time… stay for ${remainingSec}s more.`;
+  } else if (returnedEarly) {
+    gateStatus.textContent = `Locked! You were not on the ad page for 10s (${completedSec}s / 10s). Go back to the ad for ${remainingSec}s.`;
+  } else {
+    gateStatus.textContent = `Stay on the ad page for ${remainingSec}s to unlock.`;
+  }
 }
 
-function handleStartUnlock() {
-  if (unlocked || started || !activeVideo) return;
+function handleAdClick() {
+  if (unlocked || !activeVideo) return;
   lockPlayerArea();
-  started = true;
-  adClickBtn.disabled = true;
-  unlockReadyAt = Date.now() + (REQUIRED_SECONDS * 1000);
+  adSessionActive = true;
+  isOnAdPage = true;
+  adAwayStartedAt = Date.now();
 
-  if (AD_DIRECT_LINK) {
-    window.open(AD_DIRECT_LINK, '_blank', 'noopener,noreferrer');
-  }
-
-  syncCountdown();
-  timer = setInterval(syncCountdown, 250);
+  clearTimers();
+  syncTimer = setInterval(() => {
+    flushAdAwayTime();
+    updateGateDisplay(false);
+  }, 250);
+  updateGateDisplay(false);
 }
 
 async function openVideo(v) {
   activeVideo = v;
-  document.getElementById('modalTitle').textContent = v.title || 'Video';
-  document.getElementById('modalCategory').textContent = `#${(v.category || 'Video').replace(/\s+/g, '')}`;
-  document.getElementById('modalDescription').textContent = v.description || 'No description available.';
-  resetGateUI();
-  modal.classList.add('open');
-}
-
-async function unlockVideo() {
-  // Strict guard: never unlock unless 10 seconds have truly elapsed
-  if (!started || unlocked || !activeVideo || !modal.classList.contains('open')) return;
-  if (Date.now() < unlockReadyAt) {
-    syncCountdown();
-    return;
-  }
-
-  unlocked = true;
-  gate.style.display = 'none';
-  const area = document.getElementById('playerArea');
-  area.style.display = 'block';
-  area.innerHTML = '';
-
-  const url = String(activeVideo.video_url || '').trim();
-  const yt = youtubeId(url);
-  if (yt) {
-    const watchUrl = `https://www.youtube.com/watch?v=${yt}`;
-    area.innerHTML = `
-      <iframe class="player" src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=1" title="Video player" allow="accelerometer;autoplay;clipboard-write;
+  document.getE
